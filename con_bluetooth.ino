@@ -1,46 +1,62 @@
-#include <Servo.h>
- 
-Servo myservo1,myservo2,myservo3;
-int aci = 1;
-int aci2 = 1;
-int aci3 = 1;
-int pos = 90;   
- 
-void setup() {
-        Serial.begin(9600); 
-        myservo1.attach(5); 
-        myservo2.attach(3);
-        myservo3.attach(6);
-}
- 
-void loop() {
- 
-        // send data only when you receive data:
-        while (Serial.available() > 0) {
-                // read the incoming byte:
-                int c = Serial.read();
-                
-                if(c>=1 && c<=35){
-                   delay(2);
-                   myservo1.write(c*5);
-                   
+#include <SoftwareSerial.h>
+#include <Servo.h>  
+Servo myservo1, myservo2, myservo3, myservo4; 
 
-                  }
-                if(c>=36 && c<=71){
-                  delay(2); 
-                  myservo2.write((c-35)*5);
-                  
-                  }
-                 if(c>=72 && c<=130){
-                  delay(5); 
-                  myservo3.write((c-71)*5);
-                  
-                  }
-                delay(2);   
-                // say what you got:
-                Serial.print("C is ");
-                Serial.println(c, DEC);
-                
-                
-        }
+int bluetoothTx = 10;
+int bluetoothRx = 11;  
+
+SoftwareSerial bluetooth(bluetoothTx, bluetoothRx);
+
+void setup()
+{
+myservo1.attach(3);  
+myservo2.attach(5);
+myservo3.attach(6);
+
+Serial.begin(9600);  
+bluetooth.begin(9600); 
+}
+
+void loop()
+{
+if (bluetooth.available() >= 2 ) 
+{
+unsigned int servopos = bluetooth.read(); 
+unsigned int servopos1 = bluetooth.read(); 
+unsigned int realservo = (servopos1 * 256) + servopos;  
+
+
+//if (realservo >= 1 && realservo <= 135) // tut bırak
+//{
+//int servo1 = realservo;
+//servo1 = map(servo1, 1, 135, 0, 135);
+//myservo1.write(servo1);
+//delay(10);
+//}
+
+if (realservo >= 136 && realservo <= 226) { // sağ sol
+
+int servo2 = realservo;
+servo2 = map(servo2, 136, 226, 0, 90);
+myservo2.write(servo2);
+delay(10);
+}
+
+if (realservo >= 227 && realservo <= 406) { // yukarı aşağı
+int servo3 = realservo;
+servo3 = map(servo3, 227, 406, 0, 180);
+myservo3.write(servo3);
+delay(10);
+
+}
+
+if (realservo >= 407 && realservo <= 526) { // ileri geri
+
+int servo1 = realservo;
+servo1 = map(servo1, 407, 526, 0, 120);
+myservo1.write(servo1);
+delay(10);
+
+}
+}
 }
