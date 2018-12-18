@@ -181,7 +181,7 @@ def main():
   ser.port = '/dev/ttyACM0'
   ser.baudrate = 9600
   ser.timeout = 0
-  # open port if not already open
+  # açıkmı
   if ser.isOpen() == False:
     ser.open()
   root = Tk()
